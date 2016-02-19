@@ -27,43 +27,41 @@ public class Merge {
     public static <T extends Comparable> List<T> sortSeq(List<T> elements) {
         T[] array = (T[]) elements.toArray();
         int blockSize = (int) Math.round(Math.sqrt(elements.size()));
-        T[] sorted = sortSeq(array, 0, array.length - 1, blockSize);
+        T[] sorted = sortSeq(array, 0, array.length - 1);
         return Arrays.asList(sorted);
     }
 
-    private static <T extends Comparable> T[] sortConc(final T[] array, final int start,final int finish, final int maxBlock){
+    private static <T extends Comparable> T[] sortConc(final T[] array, final int start, final int finish, final int maxBlock) {
         if (maxBlock >= finish - start) {
             Arrays.sort(array, start, finish, null);
             return Arrays.copyOfRange(array, start, finish);
         }
-        final int mid = start + finish / 2;
+        final int mid = start + (finish - start) / 2;
         Future<T[]> future1 = executor.submit(new Callable<T[]>() {
             public T[] call() {
                 return sortConc(array, start, mid, maxBlock);
             }
         });
-        Future<T[]> future2 =     executor.submit(new Callable<T[]>() {
-                    public T[] call() {
-                        return sortConc(array, mid+1, finish, maxBlock);
-                    }
-                });
-        try{
-            return merge(future1.get(),future2.get());
-        }   catch ( ExecutionException e1) {
+        Future<T[]> future2 = executor.submit(new Callable<T[]>() {
+            public T[] call() {
+                return sortConc(array, mid + 1, finish, maxBlock);
+            }
+        });
+        try {
+            return merge(future1.get(), future2.get());
+        } catch (ExecutionException e1) {
             System.out.println(e1);
-        }catch (InterruptedException e2){
+        } catch (InterruptedException e2) {
             System.out.println(e2);
         }
         return null;
     }
 
-    private static <T extends Comparable> T[] sortSeq(T[] array, int start, int finish, int maxBlock) {
-        if (maxBlock >= finish - start) {
-            Arrays.sort(array, start, finish, null);
-            return Arrays.copyOfRange(array, start, finish);
-        }
-        final int mid = start + finish / 2;
-        return merge(sortSeq(array, start, mid, maxBlock),sortSeq(array, mid+1, finish, maxBlock));
+    private static <T extends Comparable> T[] sortSeq(T[] array, int start, int finish) {
+        int range = finish - start;
+
+        final int mid = start + range / 2;
+        return merge(sortSeq(array, start, mid), sortSeq(array, mid + 1, finish));
     }
 
     public static <T extends Comparable> T[] merge(T[] array1, T[] array2) {

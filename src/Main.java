@@ -21,11 +21,12 @@ public class Main {
     }
 
     private static <T extends Comparable> void check(List<T> input) {
-        System.out.println();
+        System.out.println("input");
         for (T t : input) {
             System.out.print(t + ",");
         }
         System.out.println();
+        System.out.println("--------------");
 
         long start;
 
@@ -41,7 +42,6 @@ public class Main {
         start = System.nanoTime();
         List<T> seqRes = Merge.sortSeq(input);
         System.out.println("Not concurrent " + (System.nanoTime() - start) + " nanoseconds");
-        System.out.println();
         for (T t : seqRes) {
             System.out.print(t + ",");
         }
@@ -52,7 +52,6 @@ public class Main {
         Arrays.sort(array, 0, input.size(), null);
         List<T> basic = Arrays.asList(array);
         System.out.println("Standart " + (System.nanoTime() - start) + " nanoseconds");
-        System.out.println();
         for (T t : basic) {
             System.out.print(t + ",");
         }
@@ -63,9 +62,9 @@ public class Main {
     }
 
     private static void testMerge(){
-            BigInteger[] arr1 = {new BigInteger("1"),new BigInteger("2"),new BigInteger("6"),new BigInteger("8")};
+        BigInteger[] arr1 = {new BigInteger("1"),new BigInteger("2"),new BigInteger("6"),new BigInteger("8")};
         BigInteger[] arr2 = {new BigInteger("3"),new BigInteger("4"),new BigInteger("7"),new BigInteger("9")};
-        BigInteger[] arr3 =Merge.merge(arr1,arr2);
+        BigInteger[] arr3 = Merge.merge(arr1,arr2);
         for(BigInteger i : arr3){
             System.out.println(i +",");
         }
